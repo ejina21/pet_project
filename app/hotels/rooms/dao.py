@@ -26,7 +26,7 @@ class RoomDAO(BaseDAO):
             get_rooms = select(
                 Rooms.id, Rooms.hotel_id, Rooms.name, Rooms.description, Rooms.services,
                 Rooms.price, Rooms.quantity, Rooms.image_id,
-                ((date_to - date_from) * Rooms.price).label('total_cost'),
+                ((date_to - date_from).days * Rooms.price).label('total_cost'),
                 (Rooms.quantity - func.coalesce(booked_rooms.c.booked, 0)).label('rooms_left')
             ).select_from(Rooms).join(
                 booked_rooms, booked_rooms.c.room_id == Rooms.id,

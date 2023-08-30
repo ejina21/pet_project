@@ -1,7 +1,6 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Query
 
 from app.bookings.router import router as booking_router
 from app.users.router import router as user_router
@@ -13,12 +12,6 @@ app.include_router(booking_router)
 app.include_router(user_router)
 app.include_router(hotel_router)
 app.include_router(room_router)
-
-
-class SHotel(BaseModel):
-    name: str
-    address: str
-    stars: int
 
 
 class HotelSearchArgs:
@@ -35,19 +28,3 @@ class HotelSearchArgs:
         self.date_to = date_to
         self.stars = stars
         self.has_spa = has_spa
-
-
-@app.get('/hotels', response_model=list[SHotel])
-def get_hotels(
-    search_args: HotelSearchArgs = Depends()
-):
-    hotels = [
-        {
-            "name": "Grand resort",
-            "address": "Sochi",
-            "stars": 5,
-        }
-    ]
-    return hotels
-
-
