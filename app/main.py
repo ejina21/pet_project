@@ -1,17 +1,37 @@
 from datetime import date
 from typing import Optional
 from fastapi import FastAPI, Query
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.bookings.router import router as booking_router
 from app.users.router import router as user_router
 from app.hotels.router import router as hotel_router
-from app.hotels.rooms.router import router as room_router
+from app.pages.router import router as pages_router
+from app.images.router import router as images_router
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="app/static"), "static")
+
 app.include_router(booking_router)
 app.include_router(user_router)
 app.include_router(hotel_router)
-app.include_router(room_router)
+app.include_router(pages_router)
+app.include_router(images_router)
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers",
+                   "Access-Control-Allow-Origin", "Authorization"],
+)
 
 
 class HotelSearchArgs:

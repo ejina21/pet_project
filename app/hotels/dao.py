@@ -36,7 +36,7 @@ class HotelDAO(BaseDAO):
             ).where(
                 and_(
                     Hotels.rooms_quantity - func.coalesce(booked_hotels.c.booked, 0) > 0,
-                    Hotels.location == location
+                    Hotels.location.like(f"%{location}%"),
                 )
             )
             hotels = await session.execute(get_hotels)
