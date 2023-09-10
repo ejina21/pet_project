@@ -4,7 +4,7 @@ from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordE
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
 from app.users.dao import UserDAO
 from app.users.dependencies import get_current_user
-from app.users.models import Users
+from app.users.models import User
 from app.users.schemas import SUserAuth
 
 router = APIRouter(
@@ -39,5 +39,5 @@ async def logout_user(response: Response):
 
 
 @router.get("/me")
-async def get_my_user_info(user: Users = Depends(get_current_user)):
+async def get_my_user_info(user: User = Depends(get_current_user)):
     return user

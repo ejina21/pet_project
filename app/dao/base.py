@@ -1,5 +1,7 @@
+from typing import Optional, Dict, Any, Union
+
 from app.database import async_session_maker
-from sqlalchemy import select, insert, delete
+from sqlalchemy import select, insert, delete, update
 
 
 class BaseDAO:
@@ -39,3 +41,21 @@ class BaseDAO:
             query = delete(cls.model).filter_by(id=model_id)
             await session.execute(query)
             await session.commit()
+
+    # @classmethod
+    # async def update(
+    #         cls,
+    #         session: AsyncSession,
+    #         *where,
+    #         obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+    # ) -> Optional[ModelType]:
+    #     if isinstance(obj_in, dict):
+    #         update_data = obj_in
+    #     else:
+    #         update_data = obj_in.model_dump(exclude_unset=True)
+    #
+    #     stmt = (
+    #         update(cls.model).where(*where).values(**update_data).returning(cls.model)
+    #     )
+    #     result = await session.execute(stmt)
+    #     return result.scalars().one()

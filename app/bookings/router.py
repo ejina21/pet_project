@@ -6,7 +6,7 @@ from app.bookings.schemas import SBooking, SBookingAll
 from app.config import settings
 from app.exceptions import RoomCannotBeBooked
 from app.users.dependencies import get_current_user
-from app.users.models import Users
+from app.users.models import User
 from app.tasks.tasks import send_booking_confirmation_email
 
 from pydantic import TypeAdapter
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("")
-async def get_bookings(user: Users = Depends(get_current_user)) -> list[SBookingAll]:
+async def get_bookings(user: User = Depends(get_current_user)) -> list[SBookingAll]:
     return await BookingDAO.get_all(user_id=user.id)
 
 
@@ -29,7 +29,7 @@ async def get_booking(booking_id: int) -> SBooking:
 
 
 @router.post("")
-async def add_booking(room_id: int, date_from: date, date_to: date, user: Users = Depends(get_current_user)) -> SBooking:
+async def add_booking(room_id: int, date_from: date, date_to: date, user: User = Depends(get_current_user)) -> SBooking:
     booking = await BookingDAO.add_row(user.id, room_id, date_from, date_to)
     if not booking:
         raise RoomCannotBeBooked
@@ -39,6 +39,6 @@ async def add_booking(room_id: int, date_from: date, date_to: date, user: Users 
 
 
 @router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_booking(booking_id: int, user: Users = Depends(get_current_user)):
+async def delete_booking(booking_id: int, user: User = Depends(get_current_user)):
     return await BookingDAO.delete_by_id(model_id=booking_id)
 
