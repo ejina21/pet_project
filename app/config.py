@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
 
+    TEST_DB_HOST: IPv4Address | AnyUrl
+    TEST_DB_PORT: int
+    TEST_DB_NAME: str
+    TEST_DB_USER: str
+    TEST_DB_PASS: str
+
     SECRET_KEY: str
     ALGORITHM: str
 
@@ -23,7 +29,7 @@ class Settings(BaseSettings):
     SMTP_USER: str
     SMTP_PASS: str
 
-    @field_validator('DB_PORT', 'REDIS_PORT', 'SMTP_PORT')
+    @field_validator('DB_PORT', 'REDIS_PORT', 'SMTP_PORT', 'TEST_DB_PORT')
     def validate_port(cls, v: int) -> int:
         if not 1 <= v <= 65535:
             raise ValueError("Port must be between 1 and 65535")
@@ -52,6 +58,17 @@ class Settings(BaseSettings):
             host=str(self.DB_HOST),
             port=self.DB_PORT,
             path=self.DB_NAME,
+        )
+
+    @property
+    def test_database_url(self) -> str:
+        return PostgresDsn.build(
+            scheme=self.DB_SCHEME,
+            username=self.TEST_DB_USER,
+            password=self.TEST_DB_PASS,
+            host=str(self.TEST_DB_HOST),
+            port=self.TEST_DB_PORT,
+            path=self.TEST_DB_NAME,
         )
 
     REDIS_SCHEME: str

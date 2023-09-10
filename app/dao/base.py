@@ -42,6 +42,13 @@ class BaseDAO:
             await session.execute(query)
             await session.commit()
 
+    @classmethod
+    async def delete(cls, **filter_by):
+        async with async_session_maker() as session:
+            query = delete(cls.model).filter_by(**filter_by)
+            await session.execute(query)
+            await session.commit()
+
     # @classmethod
     # async def update(
     #         cls,
