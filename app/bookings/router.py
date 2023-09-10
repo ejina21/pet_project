@@ -3,9 +3,13 @@ from datetime import date
 from fastapi import APIRouter, Depends, status
 from app.bookings.dao import BookingDAO
 from app.bookings.schemas import SBooking, SBookingAll
+from app.config import settings
 from app.exceptions import RoomCannotBeBooked
 from app.users.dependencies import get_current_user
 from app.users.models import Users
+from app.tasks.tasks import send_booking_confirmation_email
+
+from pydantic import TypeAdapter
 
 router = APIRouter(
     prefix="/bookings",
@@ -29,6 +33,8 @@ async def add_booking(room_id: int, date_from: date, date_to: date, user: Users 
     booking = await BookingDAO.add_row(user.id, room_id, date_from, date_to)
     if not booking:
         raise RoomCannotBeBooked
+    booking_dict = TypeAdapter(dict).validate_python(booking)
+    send_booking_confirmation_email.delay(booking_dict, settings.SMTP_USER)
     return booking
 
 

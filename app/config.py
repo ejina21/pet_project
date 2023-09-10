@@ -18,7 +18,12 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
 
-    @field_validator('DB_PORT', 'REDIS_PORT')
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
+
+    @field_validator('DB_PORT', 'REDIS_PORT', 'SMTP_PORT')
     def validate_port(cls, v: int) -> int:
         if not 1 <= v <= 65535:
             raise ValueError("Port must be between 1 and 65535")

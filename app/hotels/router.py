@@ -1,6 +1,7 @@
-from datetime import date
+from datetime import date, datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
+from fastapi_cache.decorator import cache
 
 from app.hotels.dao import HotelDAO
 from app.hotels.schemas import SHotel, SHotelAll
@@ -12,7 +13,12 @@ router = APIRouter(
 
 
 @router.get("/{location}")
-async def get_hotels(location: str, date_from: date, date_to: date) -> list[SHotelAll]:
+@cache(expire=20)
+async def get_hotels(
+        location: str,
+        date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+        date_to: date = Query(..., description=f"Например, {datetime.now().date()}")
+) -> list[SHotelAll]:
     return await HotelDAO.get_all(location=location, date_from=date_from, date_to=date_to)
 
 

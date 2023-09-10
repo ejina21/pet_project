@@ -1,16 +1,32 @@
-from datetime import date
-from typing import Optional
-from fastapi import FastAPI, Query
+from asyncio.log import logger
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
+
 from app.bookings.router import router as booking_router
+from app.config import settings
 from app.users.router import router as user_router
 from app.hotels.router import router as hotel_router
 from app.pages.router import router as pages_router
 from app.images.router import router as images_router
 
-app = FastAPI()
+from sqladmin import Admin, ModelView
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis = aioredis.from_url(f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}", encoding="utf8",
+                              decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="cache")
+    yield
+    logger.info("Service exited")
+
+app = FastAPI(lifespan=lifespan)
 
 app.mount("/static", StaticFiles(directory="app/static"), "static")
 
@@ -32,19 +48,3 @@ app.add_middleware(
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers",
                    "Access-Control-Allow-Origin", "Authorization"],
 )
-
-
-class HotelSearchArgs:
-    def __init__(
-        self,
-        location: str,
-        date_from: date,
-        date_to: date,
-        stars: Optional[int] = Query(None, ge=1, le=5),
-        has_spa: Optional[bool] = None,
-    ):
-        self.location = location
-        self.date_from = date_from
-        self.date_to = date_to
-        self.stars = stars
-        self.has_spa = has_spa
