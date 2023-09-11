@@ -1,6 +1,7 @@
-from typing import Literal
-from pydantic import AnyUrl, field_validator, PostgresDsn, RedisDsn
 from ipaddress import IPv4Address
+from typing import Literal
+
+from pydantic import AnyUrl, PostgresDsn, RedisDsn, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 

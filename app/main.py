@@ -1,24 +1,23 @@
 from asyncio.log import logger
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis import asyncio as aioredis
+from sqladmin import Admin
 
 from app.admin.auth import authentication_backend
+from app.admin.views import BookingAdmin, HotelsAdmin, RoomsAdmin, UserAdmin
 from app.bookings.router import router as booking_router
 from app.config import settings
-from app.admin.views import UserAdmin, BookingAdmin, HotelsAdmin, RoomsAdmin
-from app.users.router import router as user_router
-from app.hotels.router import router as hotel_router
-from app.pages.router import router as pages_router
-from app.images.router import router as images_router
 from app.database import engine
-
-from sqladmin import Admin
+from app.hotels.router import router as hotel_router
+from app.images.router import router as images_router
+from app.pages.router import router as pages_router
+from app.users.router import router as user_router
 
 
 @asynccontextmanager

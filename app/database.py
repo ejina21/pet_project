@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import NullPool
-from app.config import settings
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.orm import DeclarativeBase
 
+from app.config import settings
 
 if settings.MODE == "TEST":
     DATABASE_URL = str(settings.test_database_url)

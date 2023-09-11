@@ -1,8 +1,8 @@
 from datetime import date
 
 from app.hotels.rooms.dao import RoomDAO
+from app.hotels.rooms.schemas import SRoomAll
 from app.hotels.router import router
-from app.hotels.rooms.schemas import SRoomAll, SRoom
 
 
 @router.get("/{hotel_id}/rooms")

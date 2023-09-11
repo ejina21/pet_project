@@ -1,6 +1,7 @@
+from sqlalchemy import JSON, Column, Integer, String
+from sqlalchemy.orm import Mapped, relationship
+
 from app.database import Base
-from sqlalchemy import Column, Integer, String, JSON
-from sqlalchemy.orm import relationship, Mapped
 
 
 class Hotels(Base):
