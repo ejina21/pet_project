@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     MODE: Literal["DEV", "TEST", "PROD"]
-    LOG_LEVEL: str
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING"]
 
     DB_SCHEME: str
     DB_HOST: IPv4Address | AnyUrl
@@ -37,14 +37,14 @@ class Settings(BaseSettings):
         return v
 
     @field_validator("DB_SCHEME")
-    def validate_pg_scheme(cls, v: int) -> PostgresDsn:
+    def validate_pg_scheme(cls, v: str) -> PostgresDsn:
         allowed_schemes = PostgresDsn.__metadata__[0].allowed_schemes
         if v not in allowed_schemes:
             raise ValueError("Invalid PostgresDsn scheme")
         return v
 
     @field_validator("REDIS_SCHEME")
-    def validate_rds_scheme(cls, v: int) -> RedisDsn:
+    def validate_rds_scheme(cls, v: str) -> RedisDsn:
         allowed_schemes = RedisDsn.__metadata__[0].allowed_schemes
         if v not in allowed_schemes:
             raise ValueError("Invalid RedisDsn scheme")
