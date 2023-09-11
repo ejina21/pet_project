@@ -15,11 +15,13 @@ router = APIRouter(
 @router.get("/{location}")
 @cache(expire=20)
 async def get_hotels(
-        location: str,
-        date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
-        date_to: date = Query(..., description=f"Например, {datetime.now().date()}")
+    location: str,
+    date_from: date = Query(..., description=f"Например, {datetime.now().date()}"),
+    date_to: date = Query(..., description=f"Например, {datetime.now().date()}"),
 ) -> list[SHotelAll]:
-    return await HotelDAO.get_all(location=location, date_from=date_from, date_to=date_to)
+    return await HotelDAO.get_all(
+        location=location, date_from=date_from, date_to=date_to
+    )
 
 
 @router.get("/id/{hotel_id}")

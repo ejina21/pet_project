@@ -17,6 +17,6 @@ def create_booking_confirmation_template(
             <h1>Подтвердите бронирование</h1>
             Вы забронировали отель с {booking["date_from"]} по {booking["date_to"]}
         """,
-        subtype="html"
+        subtype="html",
     )
     return email

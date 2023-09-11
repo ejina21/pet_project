@@ -7,4 +7,6 @@ from app.hotels.rooms.schemas import SRoomAll, SRoom
 
 @router.get("/{hotel_id}/rooms")
 async def get_rooms(hotel_id: int, date_from: date, date_to: date) -> list[SRoomAll]:
-    return await RoomDAO.get_all(hotel_id=hotel_id, date_from=date_from, date_to=date_to)
+    return await RoomDAO.get_all(
+        hotel_id=hotel_id, date_from=date_from, date_to=date_to
+    )

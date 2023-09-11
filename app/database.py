@@ -4,7 +4,7 @@ from sqlalchemy import NullPool
 from app.config import settings
 
 
-if settings.MODE == 'TEST':
+if settings.MODE == "TEST":
     DATABASE_URL = str(settings.test_database_url)
     DATABASE_PARAMS = {"poolclass": NullPool}
 else:

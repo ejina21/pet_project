@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    MODE: Literal['DEV', 'TEST', 'PROD']
+    MODE: Literal["DEV", "TEST", "PROD"]
     LOG_LEVEL: str
 
     DB_SCHEME: str
@@ -29,24 +29,24 @@ class Settings(BaseSettings):
     SMTP_USER: str
     SMTP_PASS: str
 
-    @field_validator('DB_PORT', 'REDIS_PORT', 'SMTP_PORT', 'TEST_DB_PORT')
+    @field_validator("DB_PORT", "REDIS_PORT", "SMTP_PORT", "TEST_DB_PORT")
     def validate_port(cls, v: int) -> int:
         if not 1 <= v <= 65535:
             raise ValueError("Port must be between 1 and 65535")
         return v
 
-    @field_validator('DB_SCHEME')
+    @field_validator("DB_SCHEME")
     def validate_pg_scheme(cls, v: int) -> PostgresDsn:
         allowed_schemes = PostgresDsn.__metadata__[0].allowed_schemes
         if v not in allowed_schemes:
-            raise ValueError('Invalid PostgresDsn scheme')
+            raise ValueError("Invalid PostgresDsn scheme")
         return v
 
-    @field_validator('REDIS_SCHEME')
+    @field_validator("REDIS_SCHEME")
     def validate_rds_scheme(cls, v: int) -> RedisDsn:
         allowed_schemes = RedisDsn.__metadata__[0].allowed_schemes
         if v not in allowed_schemes:
-            raise ValueError('Invalid RedisDsn scheme')
+            raise ValueError("Invalid RedisDsn scheme")
         return v
 
     @property
@@ -80,10 +80,10 @@ class Settings(BaseSettings):
         return RedisDsn.build(
             scheme=self.REDIS_SCHEME,
             host=str(self.REDIS_HOST),
-            port=str(self.REDIS_PORT)
+            port=str(self.REDIS_PORT),
         )
 
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file=".env")
 
 
 settings = Settings()

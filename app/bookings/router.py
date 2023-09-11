@@ -29,7 +29,9 @@ async def get_booking(booking_id: int) -> SBooking:
 
 
 @router.post("")
-async def add_booking(room_id: int, date_from: date, date_to: date, user: User = Depends(get_current_user)) -> SBooking:
+async def add_booking(
+    room_id: int, date_from: date, date_to: date, user: User = Depends(get_current_user)
+) -> SBooking:
     booking = await BookingDAO.add_row(user.id, room_id, date_from, date_to)
     if not booking:
         raise RoomCannotBeBooked
@@ -41,4 +43,3 @@ async def add_booking(room_id: int, date_from: date, date_to: date, user: User =
 @router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_booking(booking_id: int, user: User = Depends(get_current_user)):
     return await BookingDAO.delete_by_id(model_id=booking_id)
-

@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, Mapped
 
 
 class Rooms(Base):
-    __tablename__ = 'rooms'
+    __tablename__ = "rooms"
     id = Column(Integer, primary_key=True)
     hotel_id = Column(ForeignKey("hotels.id"))
     name = Column(String, nullable=False)

@@ -33,8 +33,8 @@ async def prepare_database():
     rooms = open_mock_json("rooms")
 
     for booking in bookings:
-        booking["date_from"] = datetime.strptime(booking["date_from"], '%Y-%m-%d')
-        booking["date_to"] = datetime.strptime(booking["date_to"], '%Y-%m-%d')
+        booking["date_from"] = datetime.strptime(booking["date_from"], "%Y-%m-%d")
+        booking["date_to"] = datetime.strptime(booking["date_to"], "%Y-%m-%d")
 
     async with async_session_maker() as session:
         add_hotels = insert(Hotels).values(hotels)
@@ -71,9 +71,12 @@ async def ac():
 async def authenticated_ac():
     "Асинхронный аутентифицированный клиент для тестирования эндпоинтов"
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
-        await ac.post("/api/v1/auth/login", json={
-            "email": "test@test.com",
-            "password": "test",
-        })
+        await ac.post(
+            "/api/v1/auth/login",
+            json={
+                "email": "test@test.com",
+                "password": "test",
+            },
+        )
         assert ac.cookies["booking_access_token"]
         yield ac
