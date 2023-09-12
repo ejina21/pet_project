@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING"]
 
     DB_SCHEME: str
-    DB_HOST: IPv4Address | AnyUrl
+    DB_HOST: str
     DB_PORT: int
     DB_NAME: str
     DB_USER: str
@@ -73,7 +73,7 @@ class Settings(BaseSettings):
         )
 
     REDIS_SCHEME: str
-    REDIS_HOST: IPv4Address | AnyUrl
+    REDIS_HOST: str
     REDIS_PORT: int
 
     @property
