@@ -18,9 +18,11 @@ from app.config import settings
 from app.database import engine
 from app.hotels.router import router as hotel_router
 from app.images.router import router as images_router
+from app.importer.router import router as import_router
 from app.logger import logger
 from app.pages.router import router as pages_router
-from app.users.router import router as user_router
+from app.users.router import router_users, router_auth
+from app.prometheus.router import router as prometheus_router
 
 
 @asynccontextmanager
@@ -35,13 +37,23 @@ async def lifespan(app: FastAPI):
     logger.info("Service exited")
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    title="Бронирование Отелей",
+    version="0.1.0",
+    root_path="/api",
+)
 
 app.include_router(booking_router)
-app.include_router(user_router)
+app.include_router(router_users)
+app.include_router(router_auth)
 app.include_router(hotel_router)
+
 app.include_router(pages_router)
 app.include_router(images_router)
+app.include_router(prometheus_router)
+app.include_router(import_router)
+
 
 origins = [
     "http://localhost:3000",

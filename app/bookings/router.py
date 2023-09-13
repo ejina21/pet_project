@@ -4,12 +4,12 @@ from fastapi import APIRouter, Depends, status
 from pydantic import TypeAdapter
 
 from app.bookings.dao import BookingDAO
-from app.bookings.schemas import SBooking, SBookingAll
+from app.bookings.schemas import SBooking, SBookingInfo, SNewBooking
 from app.config import settings
 from app.exceptions import RoomCannotBeBooked
 from app.tasks.tasks import send_booking_confirmation_email
 from app.users.dependencies import get_current_user
-from app.users.models import User
+from app.users.models import Users
 
 router = APIRouter(
     prefix="/bookings",
@@ -18,7 +18,7 @@ router = APIRouter(
 
 
 @router.get("")
-async def get_bookings(user: User = Depends(get_current_user)) -> list[SBookingAll]:
+async def get_bookings(user: Users = Depends(get_current_user)) -> list[SBookingInfo]:
     return await BookingDAO.get_all(user_id=user.id)
 
 
@@ -28,18 +28,18 @@ async def get_booking(booking_id: int) -> SBooking:
     return result
 
 
-@router.post("")
+@router.post("", status_code=201)
 async def add_booking(
-    room_id: int, date_from: date, date_to: date, user: User = Depends(get_current_user)
+    booking: SNewBooking, user: Users = Depends(get_current_user)
 ) -> SBooking:
-    booking = await BookingDAO.add_row(user.id, room_id, date_from, date_to)
+    booking = await BookingDAO.add_row(user.id, booking.room_id, booking.date_from, booking.date_to)
     if not booking:
         raise RoomCannotBeBooked
-    booking_dict = TypeAdapter(dict).validate_python(booking)
+    booking_dict = TypeAdapter(SNewBooking).validate_python(booking).model_dump()
     send_booking_confirmation_email.delay(booking_dict, settings.SMTP_USER)
     return booking
 
 
 @router.delete("/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_booking(booking_id: int, user: User = Depends(get_current_user)):
-    return await BookingDAO.delete_by_id(model_id=booking_id)
+async def delete_booking(booking_id: int, user: Users = Depends(get_current_user)):
+    return await BookingDAO.delete(id=booking_id)
